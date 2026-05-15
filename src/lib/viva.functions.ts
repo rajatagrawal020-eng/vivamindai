@@ -91,6 +91,47 @@ No markdown, no commentary. JSON only.`;
     }
   });
 
+const explainSchema = z.object({
+  question: z.string().min(1).max(800),
+  baseAnswer: z.string().min(1).max(4000),
+  mode: z.enum(["simple", "hindi", "hinglish"]),
+});
+
+export const explainAnswer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => explainSchema.parse(data))
+  .handler(async ({ data }) => {
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) return { ok: false as const, error: "AI gateway not configured." };
+
+    const modeInstr = {
+      simple:
+        "Re-explain in extremely simple English (ELI5 style). Use short sentences, everyday words, and a relatable analogy if helpful. Avoid jargon. 4-7 sentences.",
+      hindi:
+        "इसे सरल हिंदी (Devanagari) में फिर से समझाएं। आसान शब्द, छोटे वाक्य, ज़रूरत हो तो रोज़मर्रा का उदाहरण दें। 4-7 वाक्य।",
+      hinglish:
+        "Isko simple Hinglish me dobara samjhao (Hindi spoken in Roman script, technical terms English me rakh sakte ho). Short sentences, easy words, ek chhota relatable example bhi de sakte ho. 4-7 sentences.",
+    }[data.mode];
+
+    const prompt = `Question: ${data.question}
+Existing answer: ${data.baseAnswer}
+
+Task: ${modeInstr}
+Return ONLY the explanation text. No headings, no markdown, no preamble.`;
+
+    try {
+      const gateway = createLovableAiGatewayProvider(apiKey);
+      const model = gateway("google/gemini-3-flash-preview");
+      const { text } = await generateText({ model, prompt });
+      return { ok: true as const, explanation: text.trim() };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Unknown error";
+      if (msg.includes("429")) return { ok: false as const, error: "Rate limit reached. Try again in a moment." };
+      if (msg.includes("402")) return { ok: false as const, error: "AI credits exhausted." };
+      return { ok: false as const, error: "Could not generate explanation." };
+    }
+  });
+
 export const listSessions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
