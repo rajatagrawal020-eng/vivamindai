@@ -33,15 +33,22 @@ function DashboardPage() {
   const [questions, setQuestions] = useState<VivaQuestion[]>([]);
   const [sessions, setSessions] = useState<Array<{ id: string; category: string; subject: string; topic: string; difficulty: string; created_at: string }>>([]);
   type Mode = "simple" | "hindi" | "hinglish";
+  type Base = "short" | "detailed";
   const [explanations, setExplanations] = useState<Record<string, string>>({});
   const [explainLoading, setExplainLoading] = useState<Record<string, boolean>>({});
+  const [baseChoice, setBaseChoice] = useState<Record<number, Base>>({});
+
+  const getBase = (i: number): Base => baseChoice[i] ?? "detailed";
 
   const onExplain = async (idx: number, q: VivaQuestion, mode: Mode) => {
-    const key = `${idx}:${mode}`;
+    const base = getBase(idx);
+    const key = `${idx}:${base}:${mode}`;
     if (explanations[key] || explainLoading[key]) return;
+    const baseAnswer = base === "short" ? q.short : q.detailed;
+    if (!baseAnswer) return toast.error("No answer to explain");
     setExplainLoading((s) => ({ ...s, [key]: true }));
     try {
-      const r = await explain({ data: { question: q.q, baseAnswer: q.detailed || q.short, mode } });
+      const r = await explain({ data: { question: q.q, baseAnswer, mode } });
       if (!r.ok) toast.error(r.error);
       else setExplanations((s) => ({ ...s, [key]: r.explanation }));
     } catch (err: unknown) {
