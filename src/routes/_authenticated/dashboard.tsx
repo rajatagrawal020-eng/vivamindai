@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Navbar, Footer } from "@/components/site/Chrome";
-import { generateViva, listSessions, type VivaQuestion } from "@/lib/viva.functions";
+import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
 
@@ -21,6 +21,7 @@ function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   const generate = useServerFn(generateViva);
+  const explain = useServerFn(explainAnswer);
   const fetchList = useServerFn(listSessions);
 
   const [category, setCategory] = useState(CATEGORIES[0]);
@@ -31,6 +32,24 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<VivaQuestion[]>([]);
   const [sessions, setSessions] = useState<Array<{ id: string; category: string; subject: string; topic: string; difficulty: string; created_at: string }>>([]);
+  type Mode = "simple" | "hindi" | "hinglish";
+  const [explanations, setExplanations] = useState<Record<string, string>>({});
+  const [explainLoading, setExplainLoading] = useState<Record<string, boolean>>({});
+
+  const onExplain = async (idx: number, q: VivaQuestion, mode: Mode) => {
+    const key = `${idx}:${mode}`;
+    if (explanations[key] || explainLoading[key]) return;
+    setExplainLoading((s) => ({ ...s, [key]: true }));
+    try {
+      const r = await explain({ data: { question: q.q, baseAnswer: q.detailed || q.short, mode } });
+      if (!r.ok) toast.error(r.error);
+      else setExplanations((s) => ({ ...s, [key]: r.explanation }));
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setExplainLoading((s) => ({ ...s, [key]: false }));
+    }
+  };
 
   const refresh = async () => {
     try { const r = await fetchList(); setSessions(r.sessions); } catch { /* ignore */ }
@@ -124,6 +143,40 @@ function DashboardPage() {
                         <summary className="cursor-pointer text-xs text-brand hover:underline">Show detailed explanation</summary>
                         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{q.detailed}</p>
                       </details>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {([
+                          { mode: "simple" as const, label: "Explain simply" },
+                          { mode: "hindi" as const, label: "हिंदी में समझाएं" },
+                          { mode: "hinglish" as const, label: "Hinglish me samjhao" },
+                        ]).map(({ mode, label }) => {
+                          const key = `${i}:${mode}`;
+                          const isLoading = explainLoading[key];
+                          const has = !!explanations[key];
+                          return (
+                            <button
+                              key={mode}
+                              onClick={() => onExplain(i, q, mode)}
+                              disabled={isLoading || has}
+                              className="rounded-full border border-border/60 px-3 py-1 text-xs hover:bg-white/[0.04] disabled:opacity-60 inline-flex items-center gap-1.5"
+                            >
+                              {isLoading && <Loader2 className="size-3 animate-spin" />}
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {(["simple", "hindi", "hinglish"] as const).map((mode) => {
+                        const key = `${i}:${mode}`;
+                        const txt = explanations[key];
+                        if (!txt) return null;
+                        const labels = { simple: "Simple English", hindi: "हिंदी", hinglish: "Hinglish" };
+                        return (
+                          <div key={mode} className="mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3">
+                            <div className="text-[10px] uppercase tracking-wider text-brand font-semibold">{labels[mode]}</div>
+                            <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap">{txt}</p>
+                          </div>
+                        );
+                      })}
                     </div>
                   </motion.div>
                 ))}
