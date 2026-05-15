@@ -75,7 +75,7 @@ No markdown, no commentary. JSON only.`;
           topic: data.topic,
           difficulty: data.difficulty,
           language: data.language,
-          questions: questions as unknown as object,
+          questions: JSON.parse(JSON.stringify(questions)),
         })
         .select("id")
         .single();
