@@ -21,6 +21,7 @@ function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   const generate = useServerFn(generateViva);
+  const explain = useServerFn(explainAnswer);
   const fetchList = useServerFn(listSessions);
 
   const [category, setCategory] = useState(CATEGORIES[0]);
