@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Navbar, Footer } from "@/components/site/Chrome";
-import { generateViva, listSessions, type VivaQuestion } from "@/lib/viva.functions";
+import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
 
