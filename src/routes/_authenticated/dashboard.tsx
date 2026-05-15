@@ -150,13 +150,32 @@ function DashboardPage() {
                         <summary className="cursor-pointer text-xs text-brand hover:underline">Show detailed explanation</summary>
                         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{q.detailed}</p>
                       </details>
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <div className="inline-flex rounded-full border border-border/60 p-0.5 text-[11px]">
+                          {(["short", "detailed"] as const).map((b) => {
+                            const active = getBase(i) === b;
+                            const disabled = b === "detailed" && !q.detailed;
+                            return (
+                              <button
+                                key={b}
+                                type="button"
+                                onClick={() => setBaseChoice((s) => ({ ...s, [i]: b }))}
+                                disabled={disabled}
+                                className={`rounded-full px-2.5 py-1 transition-colors disabled:opacity-40 ${active ? "bg-brand text-white" : "text-muted-foreground hover:text-foreground"}`}
+                              >
+                                {b === "short" ? "Short" : "Detailed"}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <span className="text-[11px] text-muted-foreground">→ explain as:</span>
                         {([
-                          { mode: "simple" as const, label: "Explain simply" },
-                          { mode: "hindi" as const, label: "हिंदी में समझाएं" },
-                          { mode: "hinglish" as const, label: "Hinglish me samjhao" },
+                          { mode: "simple" as const, label: "Simple" },
+                          { mode: "hindi" as const, label: "हिंदी" },
+                          { mode: "hinglish" as const, label: "Hinglish" },
                         ]).map(({ mode, label }) => {
-                          const key = `${i}:${mode}`;
+                          const base = getBase(i);
+                          const key = `${i}:${base}:${mode}`;
                           const isLoading = explainLoading[key];
                           const has = !!explanations[key];
                           return (
@@ -172,18 +191,21 @@ function DashboardPage() {
                           );
                         })}
                       </div>
-                      {(["simple", "hindi", "hinglish"] as const).map((mode) => {
-                        const key = `${i}:${mode}`;
-                        const txt = explanations[key];
-                        if (!txt) return null;
-                        const labels = { simple: "Simple English", hindi: "हिंदी", hinglish: "Hinglish" };
-                        return (
-                          <div key={mode} className="mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3">
-                            <div className="text-[10px] uppercase tracking-wider text-brand font-semibold">{labels[mode]}</div>
-                            <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap">{txt}</p>
-                          </div>
-                        );
-                      })}
+                      {(["short", "detailed"] as const).flatMap((base) =>
+                        (["simple", "hindi", "hinglish"] as const).map((mode) => {
+                          const key = `${i}:${base}:${mode}`;
+                          const txt = explanations[key];
+                          if (!txt) return null;
+                          const modeLabels = { simple: "Simple English", hindi: "हिंदी", hinglish: "Hinglish" };
+                          const baseLabel = base === "short" ? "Short answer" : "Detailed answer";
+                          return (
+                            <div key={key} className="mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3">
+                              <div className="text-[10px] uppercase tracking-wider text-brand font-semibold">{modeLabels[mode]} · from {baseLabel}</div>
+                              <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap">{txt}</p>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </motion.div>
                 ))}
