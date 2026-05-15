@@ -32,6 +32,24 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<VivaQuestion[]>([]);
   const [sessions, setSessions] = useState<Array<{ id: string; category: string; subject: string; topic: string; difficulty: string; created_at: string }>>([]);
+  type Mode = "simple" | "hindi" | "hinglish";
+  const [explanations, setExplanations] = useState<Record<string, string>>({});
+  const [explainLoading, setExplainLoading] = useState<Record<string, boolean>>({});
+
+  const onExplain = async (idx: number, q: VivaQuestion, mode: Mode) => {
+    const key = `${idx}:${mode}`;
+    if (explanations[key] || explainLoading[key]) return;
+    setExplainLoading((s) => ({ ...s, [key]: true }));
+    try {
+      const r = await explain({ data: { question: q.q, baseAnswer: q.detailed || q.short, mode } });
+      if (!r.ok) toast.error(r.error);
+      else setExplanations((s) => ({ ...s, [key]: r.explanation }));
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setExplainLoading((s) => ({ ...s, [key]: false }));
+    }
+  };
 
   const refresh = async () => {
     try { const r = await fetchList(); setSessions(r.sessions); } catch { /* ignore */ }
