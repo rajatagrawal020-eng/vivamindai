@@ -32,6 +32,7 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<VivaQuestion[]>([]);
   const [sessions, setSessions] = useState<Array<{ id: string; category: string; subject: string; topic: string; difficulty: string; created_at: string }>>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
   type Mode = "simple" | "hindi" | "hinglish";
   type Base = "short" | "detailed";
   const [explanations, setExplanations] = useState<Record<string, string>>({});
@@ -59,7 +60,7 @@ function DashboardPage() {
   };
 
   const refresh = async () => {
-    try { const r = await fetchList(); setSessions(r.sessions); } catch { /* ignore */ }
+    try { const r = await fetchList(); setSessions(r.sessions); } catch { /* ignore */ } finally { setSessionsLoading(false); }
   };
   useEffect(() => { refresh(); }, []);
 
