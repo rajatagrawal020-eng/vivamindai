@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Brain, Menu, X, Globe } from "lucide-react";
+import { Brain, Menu, X, Globe, Github, Linkedin, Mail } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,8 +68,8 @@ export function Navbar() {
 export function Footer() {
   const { t } = useI18n();
   return (
-    <footer className="border-t border-border/50 mt-32">
-      <div className="mx-auto max-w-7xl px-5 py-12 grid sm:grid-cols-2 gap-8">
+    <footer className="border-t border-border/50 mt-24">
+      <div className="mx-auto max-w-7xl px-5 py-12 grid gap-10 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">
             <div className="size-7 rounded-md bg-gradient-brand grid place-items-center"><Brain className="size-3.5 text-white" /></div>
@@ -77,7 +77,35 @@ export function Footer() {
           </div>
           <p className="mt-3 text-sm text-muted-foreground max-w-xs">{t("footer.tag")}</p>
         </div>
-        <div className="sm:text-right text-xs text-muted-foreground self-end">
+
+        {/* Developer / Creator card */}
+        <div className="md:col-span-1">
+          <div className="glass rounded-2xl p-5 transition-all duration-300 hover:bg-white/[0.06] hover:-translate-y-0.5">
+            <div className="flex items-center gap-3">
+              <div className="size-11 rounded-full bg-gradient-brand grid place-items-center font-display font-bold text-white text-base shadow-card">
+                RA
+              </div>
+              <div className="min-w-0">
+                <div className="text-[10px] uppercase tracking-[0.18em] text-brand font-semibold">Developed by</div>
+                <div className="font-display font-semibold leading-tight truncate">Rajat Agrwal</div>
+                <div className="text-xs text-muted-foreground">Full-Stack Developer · Creator of VivaMind AI</div>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <a aria-label="Email" href="mailto:contact@vivamind.ai" className="inline-flex items-center justify-center size-8 rounded-lg glass hover:bg-white/10 transition-colors">
+                <Mail className="size-4" />
+              </a>
+              <a aria-label="GitHub" href="https://github.com/" target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center size-8 rounded-lg glass hover:bg-white/10 transition-colors">
+                <Github className="size-4" />
+              </a>
+              <a aria-label="LinkedIn" href="https://www.linkedin.com/" target="_blank" rel="noreferrer noopener" className="inline-flex items-center justify-center size-8 rounded-lg glass hover:bg-white/10 transition-colors">
+                <Linkedin className="size-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="md:text-right text-xs text-muted-foreground self-end">
           © {new Date().getFullYear()} VivaMind AI. {t("footer.rights")}
         </div>
       </div>

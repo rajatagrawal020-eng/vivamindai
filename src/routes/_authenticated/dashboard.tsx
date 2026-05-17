@@ -32,6 +32,7 @@ function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<VivaQuestion[]>([]);
   const [sessions, setSessions] = useState<Array<{ id: string; category: string; subject: string; topic: string; difficulty: string; created_at: string }>>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
   type Mode = "simple" | "hindi" | "hinglish";
   type Base = "short" | "detailed";
   const [explanations, setExplanations] = useState<Record<string, string>>({});
@@ -59,7 +60,7 @@ function DashboardPage() {
   };
 
   const refresh = async () => {
-    try { const r = await fetchList(); setSessions(r.sessions); } catch { /* ignore */ }
+    try { const r = await fetchList(); setSessions(r.sessions); } catch { /* ignore */ } finally { setSessionsLoading(false); }
   };
   useEffect(() => { refresh(); }, []);
 
@@ -140,7 +141,7 @@ function DashboardPage() {
             {questions.length > 0 && (
               <div className="mt-8 space-y-4">
                 {questions.map((q, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                  <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: Math.min(i, 5) * 0.03 }}
                     className="rounded-xl border border-border/50 p-5 bg-white/[0.02]">
                     <div className="text-xs text-brand font-medium">Q{i + 1}</div>
                     <p className="mt-1 font-medium">{q.q}</p>
@@ -217,8 +218,15 @@ function DashboardPage() {
           <div className="glass rounded-2xl p-6 h-fit">
             <h2 className="font-semibold text-lg">{t("dash.recent")}</h2>
             <div className="mt-4 space-y-2">
-              {sessions.length === 0 && <p className="text-sm text-muted-foreground">{t("dash.empty")}</p>}
-              {sessions.map(s => (
+              {sessionsLoading && Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="rounded-xl p-3 space-y-2">
+                  <div className="h-3 w-24 rounded bg-white/5 animate-pulse" />
+                  <div className="h-4 w-40 rounded bg-white/10 animate-pulse" />
+                  <div className="h-3 w-32 rounded bg-white/5 animate-pulse" />
+                </div>
+              ))}
+              {!sessionsLoading && sessions.length === 0 && <p className="text-sm text-muted-foreground">{t("dash.empty")}</p>}
+              {!sessionsLoading && sessions.map(s => (
                 <div key={s.id} className="rounded-xl p-3 hover:bg-white/[0.04] cursor-pointer transition-colors">
                   <div className="text-xs text-muted-foreground">{s.category} · {s.difficulty}</div>
                   <div className="font-medium text-sm mt-0.5">{s.subject}</div>
