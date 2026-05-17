@@ -28,7 +28,7 @@ function LoginPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back!");
-    nav({ to: "/dashboard" });
+    nav({ to: "/dashboard", replace: true });
   };
 
   const onGoogle = async () => {
