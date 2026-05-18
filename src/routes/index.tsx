@@ -4,6 +4,7 @@ import { Brain, Zap, Languages, FileText, Bookmark, ShieldCheck, Cpu, Stethoscop
 import { useI18n } from "@/lib/i18n";
 import { Navbar, Footer } from "@/components/site/Chrome";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { RazorpayCheckoutButton } from "@/components/RazorpayCheckoutButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,10 +39,10 @@ function Landing() {
     { q: "Can I use it on mobile?", a: "Absolutely. The entire experience is fully responsive and works beautifully on phones, tablets and desktops." },
   ];
 
-  const plans = [
-    { k: "free", popular: false, perks: ["Limited AI generations", "Basic question bank", "EN + HI support"] },
-    { k: "pro", popular: true, perks: ["Unlimited generations", "Rapid-fire mode", "PDF analysis", "Export to PDF", "Saved sessions"] },
-    { k: "prem", popular: false, perks: ["Everything in Pro", "Voice viva simulation", "AI interview analytics", "Priority processing", "Custom roadmap"] },
+  const plans: { k: "free" | "pro" | "prem"; popular: boolean; perks: string[]; amount: number }[] = [
+    { k: "free", popular: false, amount: 0, perks: ["Limited AI generations", "Basic question bank", "EN + HI support"] },
+    { k: "pro", popular: true, amount: 49900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF analysis", "Export to PDF", "Saved sessions"] },
+    { k: "prem", popular: false, amount: 99900, perks: ["Everything in Pro", "Voice viva simulation", "AI interview analytics", "Priority processing", "Custom roadmap"] },
   ];
 
   return (
@@ -167,7 +168,16 @@ function Landing() {
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 {p.perks.map((x) => <li key={x} className="flex gap-2"><Check className="size-4 text-brand shrink-0 mt-0.5" />{x}</li>)}
               </ul>
-              <Link to="/signup" className={`mt-8 block text-center rounded-xl py-3 text-sm font-semibold ${p.popular ? "bg-gradient-brand text-white glow" : "glass hover:bg-white/10"}`}>{t("price.cta")}</Link>
+              {p.amount === 0 ? (
+                <Link to="/signup" className="mt-8 block text-center rounded-xl py-3 text-sm font-semibold glass hover:bg-white/10">{t("price.cta")}</Link>
+              ) : (
+                <RazorpayCheckoutButton
+                  amount={p.amount}
+                  description={`VivaMind ${p.k === "pro" ? "Pro" : "Premium"} plan`}
+                  label={`Pay ₹${(p.amount / 100).toFixed(0)}`}
+                  className={`mt-8 w-full rounded-xl py-3 text-sm font-semibold ${p.popular ? "bg-gradient-brand text-white glow hover:opacity-95" : ""}`}
+                />
+              )}
             </motion.div>
           ))}
         </div>
