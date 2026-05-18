@@ -4,6 +4,7 @@ import { Brain, Zap, Languages, FileText, Bookmark, ShieldCheck, Cpu, Stethoscop
 import { useI18n } from "@/lib/i18n";
 import { Navbar, Footer } from "@/components/site/Chrome";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { RazorpayCheckoutButton } from "@/components/RazorpayCheckoutButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
