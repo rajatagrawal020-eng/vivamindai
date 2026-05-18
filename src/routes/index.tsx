@@ -168,7 +168,16 @@ function Landing() {
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 {p.perks.map((x) => <li key={x} className="flex gap-2"><Check className="size-4 text-brand shrink-0 mt-0.5" />{x}</li>)}
               </ul>
-              <Link to="/signup" className={`mt-8 block text-center rounded-xl py-3 text-sm font-semibold ${p.popular ? "bg-gradient-brand text-white glow" : "glass hover:bg-white/10"}`}>{t("price.cta")}</Link>
+              {p.amount === 0 ? (
+                <Link to="/signup" className="mt-8 block text-center rounded-xl py-3 text-sm font-semibold glass hover:bg-white/10">{t("price.cta")}</Link>
+              ) : (
+                <RazorpayCheckoutButton
+                  amount={p.amount}
+                  description={`VivaMind ${p.k === "pro" ? "Pro" : "Premium"} plan`}
+                  label={`Pay ₹${(p.amount / 100).toFixed(0)}`}
+                  className={`mt-8 w-full rounded-xl py-3 text-sm font-semibold ${p.popular ? "bg-gradient-brand text-white glow hover:opacity-95" : ""}`}
+                />
+              )}
             </motion.div>
           ))}
         </div>
