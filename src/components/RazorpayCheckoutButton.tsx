@@ -77,7 +77,9 @@ export function RazorpayCheckoutButton({
   const verify = useServerFn(verifyRazorpayPayment);
   const [loading, setLoading] = useState(false);
 
-  const handleClick = async () => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (loading) return;
     setLoading(true);
     try {
