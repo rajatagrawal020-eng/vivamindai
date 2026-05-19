@@ -8,6 +8,7 @@ import { Navbar, Footer } from "@/components/site/Chrome";
 import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
+import { SpeakButton, MicButton, QuestionTimer } from "@/components/viva/VoiceMockTools";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — VivaMind AI" }] }),
