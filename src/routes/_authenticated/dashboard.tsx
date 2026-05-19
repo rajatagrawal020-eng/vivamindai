@@ -8,6 +8,7 @@ import { Navbar, Footer } from "@/components/site/Chrome";
 import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
+import { SpeakButton, MicButton, QuestionTimer } from "@/components/viva/VoiceMockTools";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — VivaMind AI" }] }),
@@ -38,6 +39,7 @@ function DashboardPage() {
   const [explanations, setExplanations] = useState<Record<string, string>>({});
   const [explainLoading, setExplainLoading] = useState<Record<string, boolean>>({});
   const [baseChoice, setBaseChoice] = useState<Record<number, Base>>({});
+  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
 
   const getBase = (i: number): Base => baseChoice[i] ?? "detailed";
 
@@ -143,8 +145,30 @@ function DashboardPage() {
                 {questions.map((q, i) => (
                   <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: Math.min(i, 5) * 0.03 }}
                     className="rounded-xl border border-border/50 p-5 bg-white/[0.02]">
-                    <div className="text-xs text-brand font-medium">Q{i + 1}</div>
+                    <div className="flex items-start justify-between gap-3 flex-wrap">
+                      <div className="text-xs text-brand font-medium">Q{i + 1}</div>
+                      <QuestionTimer seconds={45} resetKey={`${i}-${q.q}`} />
+                    </div>
                     <p className="mt-1 font-medium">{q.q}</p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <SpeakButton text={q.q} lang={language} />
+                    </div>
+                    <div className="mt-3 rounded-xl border border-border/40 bg-white/[0.02] p-3">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Your answer</label>
+                        <MicButton
+                          lang={language}
+                          onTranscript={(text) => setUserAnswers((s) => ({ ...s, [i]: text }))}
+                        />
+                      </div>
+                      <textarea
+                        value={userAnswers[i] ?? ""}
+                        onChange={(e) => setUserAnswers((s) => ({ ...s, [i]: e.target.value }))}
+                        placeholder="Speak or type your answer here…"
+                        rows={3}
+                        className="w-full resize-y rounded-lg bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/60"
+                      />
+                    </div>
                     <div className="mt-3 text-sm">
                       <div className="text-muted-foreground"><span className="text-foreground font-medium">Answer: </span>{q.short}</div>
                       <details className="mt-2 group">
