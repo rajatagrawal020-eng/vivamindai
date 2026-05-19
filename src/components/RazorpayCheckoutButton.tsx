@@ -143,7 +143,7 @@ export function RazorpayCheckoutButton({
   };
 
   return (
-    <Button onClick={handleClick} disabled={loading} className={className}>
+    <Button type="button" onClick={handleClick} disabled={loading} className={className}>
       {loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
       {label}
     </Button>
