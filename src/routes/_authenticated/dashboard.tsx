@@ -39,6 +39,7 @@ function DashboardPage() {
   const [explanations, setExplanations] = useState<Record<string, string>>({});
   const [explainLoading, setExplainLoading] = useState<Record<string, boolean>>({});
   const [baseChoice, setBaseChoice] = useState<Record<number, Base>>({});
+  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
 
   const getBase = (i: number): Base => baseChoice[i] ?? "detailed";
 
