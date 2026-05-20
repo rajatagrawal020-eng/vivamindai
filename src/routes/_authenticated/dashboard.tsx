@@ -8,7 +8,7 @@ import { Navbar, Footer } from "@/components/site/Chrome";
 import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
-import { SpeakButton, MicButton, QuestionTimer } from "@/components/viva/VoiceMockTools";
+import { SpeakButton, MicButton, QuestionTimer, speakText } from "@/components/viva/VoiceMockTools";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — VivaMind AI" }] }),
@@ -77,6 +77,10 @@ function DashboardPage() {
       else {
         setQuestions(r.questions);
         toast.success("Generated!");
+        // Auto-speak the first question while we still have the user-gesture context
+        if (r.questions[0]?.q) {
+          speakText(r.questions[0].q, language).catch(() => { /* noop */ });
+        }
         refresh();
       }
     } catch (err: unknown) {
