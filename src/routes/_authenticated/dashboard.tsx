@@ -77,6 +77,10 @@ function DashboardPage() {
       else {
         setQuestions(r.questions);
         toast.success("Generated!");
+        // Auto-speak the first question while we still have the user-gesture context
+        if (r.questions[0]?.q) {
+          speakText(r.questions[0].q, language).catch(() => { /* noop */ });
+        }
         refresh();
       }
     } catch (err: unknown) {
