@@ -143,7 +143,18 @@ export function RazorpayCheckoutButton({
   };
 
   return (
-    <Button type="button" onClick={handleClick} disabled={loading} className={className}>
+    <Button
+      type="button"
+      onClick={handleClick}
+      onPointerUp={(e) => {
+        // Belt-and-braces: some mobile browsers fire a synthetic click on a
+        // nearby <a>/Link after the tap; block bubbling at pointer level too.
+        e.stopPropagation();
+      }}
+      disabled={loading}
+      className={className}
+      style={{ touchAction: "manipulation" }}
+    >
       {loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
       {label}
     </Button>
