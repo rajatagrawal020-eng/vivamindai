@@ -41,8 +41,8 @@ function Landing() {
 
   const plans: { k: "free" | "pro" | "prem"; popular: boolean; perks: string[]; amount: number }[] = [
     { k: "free", popular: false, amount: 0, perks: ["Limited AI generations", "Basic question bank", "EN + HI support"] },
-    { k: "pro", popular: true, amount: 49900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF analysis", "Export to PDF", "Saved sessions"] },
-    { k: "prem", popular: false, amount: 99900, perks: ["Everything in Pro", "Voice viva simulation", "AI interview analytics", "Priority processing", "Custom roadmap"] },
+    { k: "pro", popular: true, amount: 4900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF analysis", "Export to PDF", "Saved sessions"] },
+    { k: "prem", popular: false, amount: 9900, perks: ["Everything in Pro", "Voice viva simulation", "AI interview analytics", "Priority processing", "Custom roadmap"] },
   ];
 
   return (
