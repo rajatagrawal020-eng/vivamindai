@@ -68,11 +68,42 @@ export function useDailyVoiceLimit() {
 function pickVoice(lang: "en" | "hi" | "hinglish"): SpeechSynthesisVoice | undefined {
   if (typeof window === "undefined") return undefined;
   const voices = window.speechSynthesis.getVoices();
-  const want = lang === "hi" ? "hi" : "en";
-  const preferred = voices.find(
-    (v) => v.lang.toLowerCase().startsWith(want) && /google|natural|neural|microsoft|samantha|aria/i.test(v.name),
-  );
-  return preferred ?? voices.find((v) => v.lang.toLowerCase().startsWith(want)) ?? voices[0];
+  if (!voices.length) return undefined;
+
+  if (lang === "hi") {
+    const hi = voices.filter((v) => v.lang.toLowerCase().startsWith("hi"));
+    return (
+      hi.find((v) => /google/i.test(v.name)) ??
+      hi.find((v) => /natural|neural|online/i.test(v.name)) ??
+      hi[0] ??
+      voices[0]
+    );
+  }
+
+  const en = voices.filter((v) => v.lang.toLowerCase().startsWith("en"));
+  // Tiered priority list — best (most natural) cloud voices first
+  const tiers: Array<(v: SpeechSynthesisVoice) => boolean> = [
+    // 1. Google US English (premium cloud voice on Chrome/Android)
+    (v) => /^Google US English$/i.test(v.name),
+    (v) => /google/i.test(v.name) && /en[-_]?us/i.test(v.lang),
+    // 2. Microsoft Natural / Neural cloud voices (Aria, Jenny, Guy, Davis…)
+    (v) => /microsoft/i.test(v.name) && /(natural|neural|online)/i.test(v.name),
+    (v) => /(aria|jenny|guy|davis|emma|brian)/i.test(v.name) && /(natural|neural|online)/i.test(v.name),
+    // 3. Apple premium / enhanced voices (Samantha, Ava, Allison, Evan)
+    (v) => /(samantha|ava|allison|evan|nicky|tom)/i.test(v.name) && /(premium|enhanced)/i.test(v.name),
+    (v) => /(samantha|ava|allison|evan)/i.test(v.name),
+    // 4. Any other Google English voice
+    (v) => /google/i.test(v.name),
+    // 5. Any other Microsoft/Apple en-US voice
+    (v) => /(microsoft|apple)/i.test(v.name) && /en[-_]?us/i.test(v.lang),
+    // 6. Any en-US voice
+    (v) => /en[-_]?us/i.test(v.lang),
+  ];
+  for (const match of tiers) {
+    const found = en.find(match);
+    if (found) return found;
+  }
+  return en[0] ?? voices[0];
 }
 
 async function waitForVoices(timeoutMs = 1500): Promise<void> {
