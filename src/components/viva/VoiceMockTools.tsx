@@ -1,6 +1,25 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Volume2, Mic, Square, Timer, Sparkles, X, Zap } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+// Developer bypass — these emails are treated as Pro and skip all paywalls/limits.
+const DEV_BYPASS_EMAILS = ["rajatagrawal020@gmail.com"];
+
+export function useIsPremium() {
+  const [premium, setPremium] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    const check = (email?: string | null) => {
+      if (!mounted) return;
+      setPremium(!!email && DEV_BYPASS_EMAILS.includes(email.toLowerCase()));
+    };
+    supabase.auth.getUser().then(({ data }) => check(data.user?.email));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => check(s?.user?.email));
+    return () => { mounted = false; sub.subscription.unsubscribe(); };
+  }, []);
+  return premium;
+}
 
 // Minimal types for the Web Speech API (not in lib.dom)
 type SRResult = { 0: { transcript: string }; isFinal: boolean };
@@ -46,6 +65,7 @@ function writeCount(n: number) {
 
 export function useDailyVoiceLimit() {
   const [count, setCount] = useState<number>(0);
+  const premium = useIsPremium();
   useEffect(() => {
     setCount(readCount());
     const sync = () => setCount(readCount());
@@ -57,11 +77,18 @@ export function useDailyVoiceLimit() {
     };
   }, []);
   const consume = useCallback(() => {
+    if (premium) return 0;
     const next = readCount() + 1;
     writeCount(next);
     return next;
-  }, []);
-  return { count, remaining: Math.max(0, DAILY_LIMIT - count), blocked: count >= DAILY_LIMIT, consume, limit: DAILY_LIMIT };
+  }, [premium]);
+  return {
+    count: premium ? 0 : count,
+    remaining: premium ? Infinity : Math.max(0, DAILY_LIMIT - count),
+    blocked: premium ? false : count >= DAILY_LIMIT,
+    consume,
+    limit: DAILY_LIMIT,
+  };
 }
 
 // ---------- Shared TTS helper (handles voice loading) ----------
