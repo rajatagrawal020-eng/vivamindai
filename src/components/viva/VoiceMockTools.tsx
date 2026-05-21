@@ -1,24 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Volume2, Mic, Square, Timer, Sparkles, X, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-
-// Developer bypass — these emails are treated as Pro and skip all paywalls/limits.
-const DEV_BYPASS_EMAILS = ["rajatagrawal020@gmail.com"];
+import { useAuth } from "@/lib/use-auth";
 
 export function useIsPremium() {
-  const [premium, setPremium] = useState(false);
-  useEffect(() => {
-    let mounted = true;
-    const check = (email?: string | null) => {
-      if (!mounted) return;
-      setPremium(!!email && DEV_BYPASS_EMAILS.includes(email.toLowerCase()));
-    };
-    supabase.auth.getUser().then(({ data }) => check(data.user?.email));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => check(s?.user?.email));
-    return () => { mounted = false; sub.subscription.unsubscribe(); };
-  }, []);
-  return premium;
+  return useAuth().isPremium;
 }
 
 // Minimal types for the Web Speech API (not in lib.dom)
