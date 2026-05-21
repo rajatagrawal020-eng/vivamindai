@@ -71,8 +71,6 @@ export const dict: Dict = {
   "price.free.p": { en: "₹0", hi: "₹0" },
   "price.pro.t": { en: "Pro", hi: "प्रो" },
   "price.pro.p": { en: "₹49/mo", hi: "₹49/माह" },
-  "price.prem.t": { en: "Premium", hi: "प्रीमियम" },
-  "price.prem.p": { en: "₹99/mo", hi: "₹99/माह" },
   "price.cta": { en: "Get started", hi: "शुरू करें" },
   "price.popular": { en: "Most popular", hi: "सबसे लोकप्रिय" },
 

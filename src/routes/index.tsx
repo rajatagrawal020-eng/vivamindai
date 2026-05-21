@@ -39,10 +39,9 @@ function Landing() {
     { q: "Can I use it on mobile?", a: "Absolutely. The entire experience is fully responsive and works beautifully on phones, tablets and desktops." },
   ];
 
-  const plans: { k: "free" | "pro" | "prem"; popular: boolean; perks: string[]; amount: number }[] = [
+  const plans: { k: "free" | "pro"; popular: boolean; perks: string[]; amount: number }[] = [
     { k: "free", popular: false, amount: 0, perks: ["Limited AI generations", "Basic question bank", "EN + HI support"] },
-    { k: "pro", popular: true, amount: 4900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF analysis", "Export to PDF", "Saved sessions"] },
-    { k: "prem", popular: false, amount: 9900, perks: ["Everything in Pro", "Voice viva simulation", "AI interview analytics", "Priority processing", "Custom roadmap"] },
+    { k: "pro", popular: true, amount: 4900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF upload & analysis", "Voice viva simulation", "Strictness levels (Easy/Medium/Hard)", "AI interview analytics", "Export to PDF", "Saved sessions", "Priority processing"] },
   ];
 
   return (
@@ -158,7 +157,7 @@ function Landing() {
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("price.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("price.title")}</h2>
         </div>
-        <div className="mt-14 grid lg:grid-cols-3 gap-5">
+        <div className="mt-14 grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
           {plans.map((p, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className={`relative glass rounded-2xl p-8 ${p.popular ? "ring-brand" : ""}`}>
@@ -173,7 +172,7 @@ function Landing() {
               ) : (
                 <RazorpayCheckoutButton
                   amount={p.amount}
-                  description={`VivaMind ${p.k === "pro" ? "Pro" : "Premium"} plan`}
+                  description={`VivaMind Pro plan`}
                   label={`Pay ₹${(p.amount / 100).toFixed(0)}`}
                   className={`mt-8 w-full rounded-xl py-3 text-sm font-semibold ${p.popular ? "bg-gradient-brand text-white glow hover:opacity-95" : ""}`}
                 />
