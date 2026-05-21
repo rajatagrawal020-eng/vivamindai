@@ -65,6 +65,7 @@ function writeCount(n: number) {
 
 export function useDailyVoiceLimit() {
   const [count, setCount] = useState<number>(0);
+  const premium = useIsPremium();
   useEffect(() => {
     setCount(readCount());
     const sync = () => setCount(readCount());
@@ -76,11 +77,18 @@ export function useDailyVoiceLimit() {
     };
   }, []);
   const consume = useCallback(() => {
+    if (premium) return 0;
     const next = readCount() + 1;
     writeCount(next);
     return next;
-  }, []);
-  return { count, remaining: Math.max(0, DAILY_LIMIT - count), blocked: count >= DAILY_LIMIT, consume, limit: DAILY_LIMIT };
+  }, [premium]);
+  return {
+    count: premium ? 0 : count,
+    remaining: premium ? Infinity : Math.max(0, DAILY_LIMIT - count),
+    blocked: premium ? false : count >= DAILY_LIMIT,
+    consume,
+    limit: DAILY_LIMIT,
+  };
 }
 
 // ---------- Shared TTS helper (handles voice loading) ----------
