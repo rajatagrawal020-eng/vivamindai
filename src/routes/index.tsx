@@ -39,10 +39,9 @@ function Landing() {
     { q: "Can I use it on mobile?", a: "Absolutely. The entire experience is fully responsive and works beautifully on phones, tablets and desktops." },
   ];
 
-  const plans: { k: "free" | "pro" | "prem"; popular: boolean; perks: string[]; amount: number }[] = [
+  const plans: { k: "free" | "pro"; popular: boolean; perks: string[]; amount: number }[] = [
     { k: "free", popular: false, amount: 0, perks: ["Limited AI generations", "Basic question bank", "EN + HI support"] },
-    { k: "pro", popular: true, amount: 4900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF analysis", "Export to PDF", "Saved sessions"] },
-    { k: "prem", popular: false, amount: 9900, perks: ["Everything in Pro", "Voice viva simulation", "AI interview analytics", "Priority processing", "Custom roadmap"] },
+    { k: "pro", popular: true, amount: 4900, perks: ["Unlimited generations", "Rapid-fire mode", "PDF upload & analysis", "Voice viva simulation", "Strictness levels (Easy/Medium/Hard)", "AI interview analytics", "Export to PDF", "Saved sessions", "Priority processing"] },
   ];
 
   return (
