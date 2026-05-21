@@ -172,7 +172,7 @@ function Landing() {
               ) : (
                 <RazorpayCheckoutButton
                   amount={p.amount}
-                  description={`VivaMind ${p.k === "pro" ? "Pro" : "Premium"} plan`}
+                  description={`VivaMind Pro plan`}
                   label={`Pay ₹${(p.amount / 100).toFixed(0)}`}
                   className={`mt-8 w-full rounded-xl py-3 text-sm font-semibold ${p.popular ? "bg-gradient-brand text-white glow hover:opacity-95" : ""}`}
                 />
