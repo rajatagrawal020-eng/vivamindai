@@ -157,7 +157,7 @@ function Landing() {
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("price.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("price.title")}</h2>
         </div>
-        <div className="mt-14 grid lg:grid-cols-3 gap-5">
+        <div className="mt-14 grid md:grid-cols-2 gap-5 max-w-3xl mx-auto">
           {plans.map((p, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className={`relative glass rounded-2xl p-8 ${p.popular ? "ring-brand" : ""}`}>
