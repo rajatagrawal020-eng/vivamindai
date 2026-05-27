@@ -22,13 +22,25 @@ const Ctx = createContext<AuthCtx>({
   isDevBypass: false,
 });
 
+function normalizeEmail(email?: string | null) {
+  return email?.trim().toLowerCase() ?? "";
+}
+
 function getGlobalEntitlements(user: User | null) {
-  const email = user?.email?.trim().toLowerCase() ?? "";
+  const email = normalizeEmail(user?.email);
   const isDevBypass = email === DEV_BYPASS_EMAIL;
   return {
     isPremium: isDevBypass,
     plan: (isDevBypass ? "pro" : "free") as "free" | "pro",
     isDevBypass,
+  };
+}
+
+export function useAuthReady() {
+  const auth = useAuth();
+  return {
+    user: auth.user,
+    isReady: !auth.loading,
   };
 }
 
@@ -39,15 +51,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const entitlements = getGlobalEntitlements(user);
 
   useEffect(() => {
+    let active = true;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+      if (!active) return;
       setSession(s);
-      setLoading(false);
     });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-    return () => subscription.unsubscribe();
+
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!active) return;
+        setSession(session);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return <Ctx.Provider value={{ session, user, loading, ...entitlements }}>{children}</Ctx.Provider>;
