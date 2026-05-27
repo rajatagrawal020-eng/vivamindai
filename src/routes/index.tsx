@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Brain, Zap, Languages, FileText, Bookmark, ShieldCheck, Cpu, Stethoscope, Landmark, Calculator, GraduationCap, Code2, Briefcase, FlaskConical, Microscope, Sparkles, ArrowRight, Check } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { useAuth } from "@/lib/use-auth";
 import { Navbar, Footer } from "@/components/site/Chrome";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { RazorpayCheckoutButton } from "@/components/RazorpayCheckoutButton";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const { t } = useI18n();
+  const { isPremium, loading } = useAuth();
 
   const features = [
     { icon: Brain, k: "feat.1" }, { icon: Zap, k: "feat.2" }, { icon: Languages, k: "feat.3" },
@@ -169,6 +171,14 @@ function Landing() {
               </ul>
               {p.amount === 0 ? (
                 <Link to="/signup" className="mt-8 block text-center rounded-xl py-3 text-sm font-semibold glass hover:bg-white/10">{t("price.cta")}</Link>
+              ) : loading ? (
+                <div className="mt-8 flex h-[48px] items-center justify-center rounded-xl border border-border/60 text-sm text-muted-foreground">
+                  Checking plan…
+                </div>
+              ) : isPremium ? (
+                <div className="mt-8 rounded-xl border border-brand/40 bg-brand/10 px-4 py-3 text-center text-sm font-semibold text-brand">
+                  Your Pro access is active
+                </div>
               ) : (
                 <RazorpayCheckoutButton
                   amount={p.amount}

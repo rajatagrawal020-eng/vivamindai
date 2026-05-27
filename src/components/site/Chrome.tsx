@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export function Navbar() {
   const { t, lang, setLang } = useI18n();
-  const { user } = useAuth();
+  const { user, loading, isPremium } = useAuth();
   const [open, setOpen] = useState(false);
   const nav = useNavigate();
 
@@ -39,8 +39,14 @@ export function Navbar() {
           <button onClick={() => setLang(lang === "en" ? "hi" : "en")} className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass text-xs font-medium hover:bg-white/5">
             <Globe className="size-3.5" /> {lang === "en" ? "EN" : "हिं"}
           </button>
-          {user ? (
+          {loading ? (
+            <div className="hidden sm:flex items-center gap-2">
+              <span className="h-9 w-24 rounded-lg glass animate-pulse" />
+              <span className="h-9 w-24 rounded-lg glass animate-pulse" />
+            </div>
+          ) : user ? (
             <>
+              {isPremium ? <span className="hidden sm:inline-flex px-3 py-1.5 rounded-lg glass text-xs font-semibold text-brand">Pro Active</span> : null}
               <Link to="/dashboard" className="hidden sm:inline-flex px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/5">{t("nav.dashboard")}</Link>
               <button onClick={onLogout} className="px-4 py-2 rounded-lg text-sm font-medium glass hover:bg-white/10">{t("nav.logout")}</button>
             </>
