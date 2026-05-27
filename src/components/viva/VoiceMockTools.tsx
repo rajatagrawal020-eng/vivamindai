@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Volume2, Mic, Square, Timer, Sparkles, X, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/lib/use-auth";
+import { useAuth, useAuthReady } from "@/lib/use-auth";
 
 export function useIsPremium() {
   return useAuth().isPremium;
@@ -52,6 +52,7 @@ function writeCount(n: number) {
 export function useDailyVoiceLimit() {
   const [count, setCount] = useState<number>(0);
   const premium = useIsPremium();
+  const { isReady } = useAuthReady();
   useEffect(() => {
     setCount(readCount());
     const sync = () => setCount(readCount());
@@ -71,7 +72,7 @@ export function useDailyVoiceLimit() {
   return {
     count: premium ? 0 : count,
     remaining: premium ? Infinity : Math.max(0, DAILY_LIMIT - count),
-    blocked: premium ? false : count >= DAILY_LIMIT,
+    blocked: !isReady ? false : premium ? false : count >= DAILY_LIMIT,
     consume,
     limit: DAILY_LIMIT,
   };
@@ -149,6 +150,8 @@ export async function speakText(text: string, lang: "en" | "hi" | "hinglish" = "
 
 // ---------- Paywall modal ----------
 export function VoicePaywallModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { isPremium } = useAuth();
+  if (isPremium) return null;
   if (!open) return null;
   const goPay = () => {
     onClose();
