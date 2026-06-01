@@ -42,7 +42,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Generate examiner-grade viva questions, rapid-fire mock interviews and bilingual explanations for engineering, medical, UPSC, commerce and coding interviews." },
       { property: "og:title", content: "VivaMind AI — AI-powered viva & interview practice" },
       { property: "og:description", content: "Generate examiner-grade viva questions, rapid-fire mock interviews and bilingual explanations for engineering, medical, UPSC, commerce and coding interviews." },
-      { property: "og:type", content: "website" },
+      { name: "google-site-verification", content: "u5I8O77kztv6yGTmLsvK-HqFrQVa5XtuU2sR5Tx_dOg" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "VivaMind AI — AI-powered viva & interview practice" },
       { name: "twitter:description", content: "Generate examiner-grade viva questions, rapid-fire mock interviews and bilingual explanations for engineering, medical, UPSC, commerce and coding interviews." },
