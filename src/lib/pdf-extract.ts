@@ -8,9 +8,8 @@ export async function extractPdfText(file: File, opts?: { maxPages?: number; max
   const maxChars = opts?.maxChars ?? 60_000;
 
   const pdfjsLib = await import("pdfjs-dist");
-  // @ts-expect-error vite ?url import
-  const workerUrl = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
-  pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+  const workerMod = (await import(/* @vite-ignore */ "pdfjs-dist/build/pdf.worker.min.mjs?url")) as { default: string };
+  pdfjsLib.GlobalWorkerOptions.workerSrc = workerMod.default;
 
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
