@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, FileText, Upload, Lock, X } from "lucide-react";
 import { Navbar, Footer } from "@/components/site/Chrome";
-import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
+import { generateViva, explainAnswer, listSessions, generateVivaFromPdf, type VivaQuestion } from "@/lib/viva.functions";
+import { extractPdfText } from "@/lib/pdf-extract";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
 import { SpeakButton, MicButton, QuestionTimer, speakText } from "@/components/viva/VoiceMockTools";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — VivaMind AI" }] }),
@@ -19,11 +21,12 @@ const CATEGORIES = ["Engineering", "Medical", "UPSC / Civil Services", "Commerce
 
 function DashboardPage() {
   const { t } = useI18n();
-  const { user } = useAuth();
+  const { user, isPremium } = useAuth();
   const router = useRouter();
   const generate = useServerFn(generateViva);
   const explain = useServerFn(explainAnswer);
   const fetchList = useServerFn(listSessions);
+  const generateFromPdf = useServerFn(generateVivaFromPdf);
 
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [subject, setSubject] = useState("");
