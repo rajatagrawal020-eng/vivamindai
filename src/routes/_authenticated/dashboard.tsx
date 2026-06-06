@@ -44,6 +44,63 @@ function DashboardPage() {
   const [baseChoice, setBaseChoice] = useState<Record<number, Base>>({});
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
 
+  // PDF upload state
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfText, setPdfText] = useState<string>("");
+  const [pdfParsing, setPdfParsing] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const onPdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    e.target.value = "";
+    if (!f) return;
+    if (f.type !== "application/pdf" && !f.name.toLowerCase().endsWith(".pdf")) {
+      return toast.error("Please upload a PDF file");
+    }
+    if (f.size > 15 * 1024 * 1024) return toast.error("PDF too large (max 15MB)");
+    setPdfFile(f);
+    setPdfText("");
+    setPdfParsing(true);
+    try {
+      const text = await extractPdfText(f);
+      if (!text || text.length < 50) {
+        toast.error("Couldn't extract enough text. Is this a scanned/image PDF?");
+        setPdfFile(null);
+      } else {
+        setPdfText(text);
+        toast.success(`Extracted ${text.length.toLocaleString()} characters`);
+      }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to read PDF");
+      setPdfFile(null);
+    } finally {
+      setPdfParsing(false);
+    }
+  };
+
+  const onGenerateFromPdf = async () => {
+    if (!pdfFile || !pdfText) return toast.error("Upload a PDF first");
+    setPdfGenerating(true);
+    setQuestions([]);
+    try {
+      const r = await generateFromPdf({
+        data: { sourceName: pdfFile.name, content: pdfText, difficulty, language },
+      });
+      if (!r.ok) toast.error(r.error);
+      else {
+        setQuestions(r.questions);
+        toast.success("Viva generated from your PDF!");
+        if (r.questions[0]?.q) speakText(r.questions[0].q, language).catch(() => {});
+        refresh();
+      }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
+
   const getBase = (i: number): Base => baseChoice[i] ?? "detailed";
 
   const onExplain = async (idx: number, q: VivaQuestion, mode: Mode) => {
