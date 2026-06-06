@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, FileText, Upload, Lock, X } from "lucide-react";
 import { Navbar, Footer } from "@/components/site/Chrome";
-import { generateViva, explainAnswer, listSessions, type VivaQuestion } from "@/lib/viva.functions";
+import { generateViva, explainAnswer, listSessions, generateVivaFromPdf, type VivaQuestion } from "@/lib/viva.functions";
+import { extractPdfText } from "@/lib/pdf-extract";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/use-auth";
 import { SpeakButton, MicButton, QuestionTimer, speakText } from "@/components/viva/VoiceMockTools";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — VivaMind AI" }] }),
@@ -19,11 +21,12 @@ const CATEGORIES = ["Engineering", "Medical", "UPSC / Civil Services", "Commerce
 
 function DashboardPage() {
   const { t } = useI18n();
-  const { user } = useAuth();
+  const { user, isPremium } = useAuth();
   const router = useRouter();
   const generate = useServerFn(generateViva);
   const explain = useServerFn(explainAnswer);
   const fetchList = useServerFn(listSessions);
+  const generateFromPdf = useServerFn(generateVivaFromPdf);
 
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [subject, setSubject] = useState("");
@@ -40,6 +43,63 @@ function DashboardPage() {
   const [explainLoading, setExplainLoading] = useState<Record<string, boolean>>({});
   const [baseChoice, setBaseChoice] = useState<Record<number, Base>>({});
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+
+  // PDF upload state
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfText, setPdfText] = useState<string>("");
+  const [pdfParsing, setPdfParsing] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const onPdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    e.target.value = "";
+    if (!f) return;
+    if (f.type !== "application/pdf" && !f.name.toLowerCase().endsWith(".pdf")) {
+      return toast.error("Please upload a PDF file");
+    }
+    if (f.size > 15 * 1024 * 1024) return toast.error("PDF too large (max 15MB)");
+    setPdfFile(f);
+    setPdfText("");
+    setPdfParsing(true);
+    try {
+      const text = await extractPdfText(f);
+      if (!text || text.length < 50) {
+        toast.error("Couldn't extract enough text. Is this a scanned/image PDF?");
+        setPdfFile(null);
+      } else {
+        setPdfText(text);
+        toast.success(`Extracted ${text.length.toLocaleString()} characters`);
+      }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to read PDF");
+      setPdfFile(null);
+    } finally {
+      setPdfParsing(false);
+    }
+  };
+
+  const onGenerateFromPdf = async () => {
+    if (!pdfFile || !pdfText) return toast.error("Upload a PDF first");
+    setPdfGenerating(true);
+    setQuestions([]);
+    try {
+      const r = await generateFromPdf({
+        data: { sourceName: pdfFile.name, content: pdfText, difficulty, language },
+      });
+      if (!r.ok) toast.error(r.error);
+      else {
+        setQuestions(r.questions);
+        toast.success("Viva generated from your PDF!");
+        if (r.questions[0]?.q) speakText(r.questions[0].q, language).catch(() => {});
+        refresh();
+      }
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed");
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
 
   const getBase = (i: number): Base => baseChoice[i] ?? "detailed";
 
@@ -143,6 +203,74 @@ function DashboardPage() {
                 </button>
               </div>
             </form>
+
+            {/* PDF upload — Pro feature */}
+            <div className="mt-6 rounded-2xl border border-border/50 bg-white/[0.02] p-5">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <FileText className="size-5 text-brand" />
+                  <h3 className="font-semibold">PDF / Resume Viva</h3>
+                  <span className="rounded-full bg-gradient-brand text-white text-[10px] font-bold px-2 py-0.5">PRO</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Upload notes, syllabus or resume — AI will interview you on it.</p>
+              </div>
+
+              {!isPremium ? (
+                <div className="mt-4 flex items-center gap-3 rounded-xl border border-dashed border-border/60 p-4 text-sm">
+                  <Lock className="size-4 text-brand" />
+                  <span className="text-muted-foreground">PDF-based viva is a Pro feature.</span>
+                  <Link to="/" hash="pricing" className="ml-auto rounded-full bg-gradient-brand px-3 py-1.5 text-xs font-semibold text-white glow">
+                    Upgrade
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {!pdfFile && (
+                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/60 p-6 text-center hover:bg-white/[0.03] transition-colors">
+                      <Upload className="size-6 text-brand mb-2" />
+                      <span className="text-sm font-medium">Click to upload a PDF</span>
+                      <span className="text-xs text-muted-foreground mt-1">Max 15 MB · text-based PDFs work best</span>
+                      <input type="file" accept="application/pdf,.pdf" className="hidden" onChange={onPdfChange} />
+                    </label>
+                  )}
+
+                  {pdfFile && (
+                    <div className="flex items-center gap-3 rounded-xl border border-border/60 p-3 text-sm">
+                      <FileText className="size-5 text-brand shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium">{pdfFile.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {(pdfFile.size / 1024).toFixed(0)} KB
+                          {pdfParsing && " · reading…"}
+                          {!pdfParsing && pdfText && ` · ${pdfText.length.toLocaleString()} chars extracted`}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setPdfFile(null); setPdfText(""); }}
+                        className="rounded-full p-1 hover:bg-white/10"
+                        aria-label="Remove PDF"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={onGenerateFromPdf}
+                    disabled={!pdfText || pdfParsing || pdfGenerating}
+                    className="w-full rounded-xl bg-gradient-brand py-3 text-sm font-semibold text-white glow disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                  >
+                    {pdfGenerating ? <><Loader2 className="size-4 animate-spin" />Generating viva from PDF…</> : <><Sparkles className="size-4" />Start viva based on this PDF</>}
+                  </button>
+                  <p className="text-[11px] text-muted-foreground">
+                    Uses the difficulty &amp; language selected above. AI questions will be grounded in your document's content.
+                  </p>
+                </div>
+              )}
+            </div>
+
 
             {questions.length > 0 && (
               <div className="mt-8 space-y-4">
