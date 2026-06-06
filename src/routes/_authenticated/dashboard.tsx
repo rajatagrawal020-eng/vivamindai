@@ -204,6 +204,74 @@ function DashboardPage() {
               </div>
             </form>
 
+            {/* PDF upload — Pro feature */}
+            <div className="mt-6 rounded-2xl border border-border/50 bg-white/[0.02] p-5">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <FileText className="size-5 text-brand" />
+                  <h3 className="font-semibold">PDF / Resume Viva</h3>
+                  <span className="rounded-full bg-gradient-brand text-white text-[10px] font-bold px-2 py-0.5">PRO</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Upload notes, syllabus or resume — AI will interview you on it.</p>
+              </div>
+
+              {!isPremium ? (
+                <div className="mt-4 flex items-center gap-3 rounded-xl border border-dashed border-border/60 p-4 text-sm">
+                  <Lock className="size-4 text-brand" />
+                  <span className="text-muted-foreground">PDF-based viva is a Pro feature.</span>
+                  <Link to="/" hash="pricing" className="ml-auto rounded-full bg-gradient-brand px-3 py-1.5 text-xs font-semibold text-white glow">
+                    Upgrade
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {!pdfFile && (
+                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border/60 p-6 text-center hover:bg-white/[0.03] transition-colors">
+                      <Upload className="size-6 text-brand mb-2" />
+                      <span className="text-sm font-medium">Click to upload a PDF</span>
+                      <span className="text-xs text-muted-foreground mt-1">Max 15 MB · text-based PDFs work best</span>
+                      <input type="file" accept="application/pdf,.pdf" className="hidden" onChange={onPdfChange} />
+                    </label>
+                  )}
+
+                  {pdfFile && (
+                    <div className="flex items-center gap-3 rounded-xl border border-border/60 p-3 text-sm">
+                      <FileText className="size-5 text-brand shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium">{pdfFile.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {(pdfFile.size / 1024).toFixed(0)} KB
+                          {pdfParsing && " · reading…"}
+                          {!pdfParsing && pdfText && ` · ${pdfText.length.toLocaleString()} chars extracted`}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setPdfFile(null); setPdfText(""); }}
+                        className="rounded-full p-1 hover:bg-white/10"
+                        aria-label="Remove PDF"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={onGenerateFromPdf}
+                    disabled={!pdfText || pdfParsing || pdfGenerating}
+                    className="w-full rounded-xl bg-gradient-brand py-3 text-sm font-semibold text-white glow disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                  >
+                    {pdfGenerating ? <><Loader2 className="size-4 animate-spin" />Generating viva from PDF…</> : <><Sparkles className="size-4" />Start viva based on this PDF</>}
+                  </button>
+                  <p className="text-[11px] text-muted-foreground">
+                    Uses the difficulty &amp; language selected above. AI questions will be grounded in your document's content.
+                  </p>
+                </div>
+              )}
+            </div>
+
+
             {questions.length > 0 && (
               <div className="mt-8 space-y-4">
                 {questions.map((q, i) => (
