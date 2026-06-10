@@ -60,10 +60,11 @@ function Landing() {
           </motion.div>
 
           <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
-            className="mt-6 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+            className="mt-6 text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight break-words">
             {t("hero.title1")} <br className="hidden sm:block" />
             <span className="text-gradient">{t("hero.title2")}</span>
           </motion.h1>
+
 
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">{t("hero.sub")}</motion.p>
