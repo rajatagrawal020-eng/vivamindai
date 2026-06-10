@@ -372,7 +372,7 @@ function DashboardPage() {
           </div>
 
           {/* History */}
-          <div className="glass rounded-2xl p-6 h-fit">
+          <div className="glass rounded-2xl p-4 sm:p-6 h-auto lg:h-fit min-w-0">
             <h2 className="font-semibold text-lg">{t("dash.recent")}</h2>
             <div className="mt-4 space-y-2">
               {sessionsLoading && Array.from({ length: 3 }).map((_, i) => (
