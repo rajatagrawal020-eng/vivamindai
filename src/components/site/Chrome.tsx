@@ -23,19 +23,19 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/60 border-b border-border/50">
-      <div className="mx-auto max-w-7xl px-5 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="size-8 rounded-lg bg-gradient-brand grid place-items-center glow">
+      <div className="mx-auto max-w-7xl px-3 sm:px-5 h-16 flex items-center justify-between gap-2">
+        <Link to="/" className="flex items-center gap-2 min-w-0 shrink">
+          <div className="size-8 shrink-0 rounded-lg bg-gradient-brand grid place-items-center glow">
             <Brain className="size-4 text-white" />
           </div>
-          <span className="font-display font-bold text-lg">VivaMind<span className="text-gradient"> AI</span></span>
+          <span className="font-display font-bold text-base sm:text-lg truncate">VivaMind<span className="text-gradient"> AI</span></span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
           {links.map(l => <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">{l.label}</a>)}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button onClick={() => setLang(lang === "en" ? "hi" : "en")} className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass text-xs font-medium hover:bg-white/5">
             <Globe className="size-3.5" /> {lang === "en" ? "EN" : "हिं"}
           </button>
@@ -48,15 +48,15 @@ export function Navbar() {
             <>
               {isPremium ? <span className="hidden sm:inline-flex px-3 py-1.5 rounded-lg glass text-xs font-semibold text-brand">Pro Active</span> : null}
               <Link to="/dashboard" className="hidden sm:inline-flex px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/5">{t("nav.dashboard")}</Link>
-              <button onClick={onLogout} className="px-4 py-2 rounded-lg text-sm font-medium glass hover:bg-white/10">{t("nav.logout")}</button>
+              <button onClick={onLogout} className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium glass hover:bg-white/10 whitespace-nowrap">{t("nav.logout")}</button>
             </>
           ) : (
             <>
               <Link to="/login" className="hidden sm:inline-flex px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/5">{t("nav.login")}</Link>
-              <Link to="/signup" className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-brand text-white shadow-card hover:opacity-95">{t("nav.signup")}</Link>
+              <Link to="/signup" className="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium bg-gradient-brand text-white shadow-card hover:opacity-95 whitespace-nowrap">{t("nav.signup")}</Link>
             </>
           )}
-          <button className="lg:hidden p-2 rounded-lg glass" onClick={() => setOpen(!open)}>
+          <button className="lg:hidden p-2 rounded-lg glass shrink-0" onClick={() => setOpen(!open)} aria-label="Menu">
             {open ? <X className="size-4" /> : <Menu className="size-4" />}
           </button>
         </div>
