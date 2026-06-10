@@ -47,12 +47,13 @@ function Landing() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-5 pt-20 pb-28 lg:pt-32 lg:pb-40 text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-5 pt-12 pb-16 sm:pt-20 sm:pb-28 lg:pt-32 lg:pb-40 text-center">
+
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-muted-foreground">
             <Sparkles className="size-3.5 text-brand" /> {t("hero.badge")}
