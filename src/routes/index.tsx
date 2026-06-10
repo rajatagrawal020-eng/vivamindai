@@ -100,7 +100,7 @@ function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="features" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("features.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("features.title")}</h2>
@@ -118,7 +118,7 @@ function Landing() {
       </section>
 
       {/* CATEGORIES */}
-      <section id="categories" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="categories" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("cats.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("cats.title")}</h2>
@@ -139,7 +139,7 @@ function Landing() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="how" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("how.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("how.title")}</h2>
@@ -157,7 +157,7 @@ function Landing() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="pricing" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("price.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("price.title")}</h2>
@@ -196,7 +196,7 @@ function Landing() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-3xl px-5 py-24">
+      <section id="faq" className="mx-auto max-w-3xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("faq.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("faq.title")}</h2>
