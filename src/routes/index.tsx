@@ -124,17 +124,18 @@ function Landing() {
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("cats.title")}</h2>
           <p className="mt-3 text-muted-foreground">{t("cats.sub")}</p>
         </div>
-        <div className="mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+        <div className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
           {cats.map((c, i) => (
-            <motion.div key={i} initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.04 }}
-              className="group glass rounded-2xl p-6 cursor-pointer hover:bg-white/[0.07] transition-all hover:-translate-y-1">
-              <div className="size-12 rounded-xl bg-gradient-to-br from-brand/20 to-brand-2/20 grid place-items-center group-hover:from-brand/40 group-hover:to-brand-2/40 transition-colors">
-                <c.i className="size-5 text-brand" />
+            <motion.div key={i} initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.05 }} transition={{ delay: i * 0.04 }}
+              className="group glass rounded-2xl p-4 sm:p-6 cursor-pointer hover:bg-white/[0.07] transition-all hover:-translate-y-1 min-w-0 h-auto">
+              <div className="size-10 sm:size-12 rounded-xl bg-gradient-to-br from-brand/20 to-brand-2/20 grid place-items-center group-hover:from-brand/40 group-hover:to-brand-2/40 transition-colors">
+                <c.i className="size-4 sm:size-5 text-brand" />
               </div>
-              <h3 className="mt-4 font-semibold">{t(c.k)}</h3>
+              <h3 className="mt-3 sm:mt-4 text-sm sm:text-base font-semibold leading-snug break-words">{t(c.k)}</h3>
             </motion.div>
           ))}
         </div>
+
       </section>
 
       {/* HOW IT WORKS */}
