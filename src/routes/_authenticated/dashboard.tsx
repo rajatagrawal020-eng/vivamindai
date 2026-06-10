@@ -151,19 +151,20 @@ function DashboardPage() {
   const inputCls = "mt-1 w-full rounded-xl glass px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
-      <div className="mx-auto max-w-6xl px-5 py-10">
+      <div className="mx-auto max-w-6xl px-4 sm:px-5 py-6 sm:py-10">
         <div className="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold">{t("dash.title")}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Hi, {user?.user_metadata?.full_name || user?.email}</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-4xl font-bold break-words">{t("dash.title")}</h1>
+            <p className="mt-1 text-sm text-muted-foreground break-all">Hi, {user?.user_metadata?.full_name || user?.email}</p>
           </div>
         </div>
 
-        <div className="mt-8 grid lg:grid-cols-3 gap-6">
+        <div className="mt-6 sm:mt-8 grid lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Generator */}
-          <div className="lg:col-span-2 glass rounded-2xl p-6">
+          <div className="lg:col-span-2 glass rounded-2xl p-4 sm:p-6 min-w-0">
+
             <div className="flex items-center gap-2"><Sparkles className="size-5 text-brand" /><h2 className="font-semibold text-lg">{t("dash.gen.title")}</h2></div>
             <form onSubmit={onGenerate} className="mt-5 grid sm:grid-cols-2 gap-4">
               <div>
@@ -371,7 +372,7 @@ function DashboardPage() {
           </div>
 
           {/* History */}
-          <div className="glass rounded-2xl p-6 h-fit">
+          <div className="glass rounded-2xl p-4 sm:p-6 h-auto lg:h-fit min-w-0">
             <h2 className="font-semibold text-lg">{t("dash.recent")}</h2>
             <div className="mt-4 space-y-2">
               {sessionsLoading && Array.from({ length: 3 }).map((_, i) => (

@@ -47,22 +47,24 @@ function Landing() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-5 pt-20 pb-28 lg:pt-32 lg:pb-40 text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-5 pt-12 pb-16 sm:pt-20 sm:pb-28 lg:pt-32 lg:pb-40 text-center">
+
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-muted-foreground">
             <Sparkles className="size-3.5 text-brand" /> {t("hero.badge")}
           </motion.div>
 
           <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
-            className="mt-6 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+            className="mt-6 text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight break-words">
             {t("hero.title1")} <br className="hidden sm:block" />
             <span className="text-gradient">{t("hero.title2")}</span>
           </motion.h1>
+
 
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">{t("hero.sub")}</motion.p>
@@ -98,7 +100,7 @@ function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="features" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("features.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("features.title")}</h2>
@@ -116,27 +118,28 @@ function Landing() {
       </section>
 
       {/* CATEGORIES */}
-      <section id="categories" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="categories" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("cats.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("cats.title")}</h2>
           <p className="mt-3 text-muted-foreground">{t("cats.sub")}</p>
         </div>
-        <div className="mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
+        <div className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
           {cats.map((c, i) => (
-            <motion.div key={i} initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.04 }}
-              className="group glass rounded-2xl p-6 cursor-pointer hover:bg-white/[0.07] transition-all hover:-translate-y-1">
-              <div className="size-12 rounded-xl bg-gradient-to-br from-brand/20 to-brand-2/20 grid place-items-center group-hover:from-brand/40 group-hover:to-brand-2/40 transition-colors">
-                <c.i className="size-5 text-brand" />
+            <motion.div key={i} initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.05 }} transition={{ delay: i * 0.04 }}
+              className="group glass rounded-2xl p-4 sm:p-6 cursor-pointer hover:bg-white/[0.07] transition-all hover:-translate-y-1 min-w-0 h-auto">
+              <div className="size-10 sm:size-12 rounded-xl bg-gradient-to-br from-brand/20 to-brand-2/20 grid place-items-center group-hover:from-brand/40 group-hover:to-brand-2/40 transition-colors">
+                <c.i className="size-4 sm:size-5 text-brand" />
               </div>
-              <h3 className="mt-4 font-semibold">{t(c.k)}</h3>
+              <h3 className="mt-3 sm:mt-4 text-sm sm:text-base font-semibold leading-snug break-words">{t(c.k)}</h3>
             </motion.div>
           ))}
         </div>
+
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="how" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("how.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("how.title")}</h2>
@@ -154,7 +157,7 @@ function Landing() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="pricing" className="mx-auto max-w-7xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center max-w-2xl mx-auto">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("price.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("price.title")}</h2>
@@ -193,7 +196,7 @@ function Landing() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-3xl px-5 py-24">
+      <section id="faq" className="mx-auto max-w-3xl px-4 sm:px-5 py-16 sm:py-24">
         <div className="text-center">
           <p className="text-xs uppercase tracking-widest text-brand font-semibold">{t("faq.kicker")}</p>
           <h2 className="mt-3 text-4xl sm:text-5xl font-bold">{t("faq.title")}</h2>
